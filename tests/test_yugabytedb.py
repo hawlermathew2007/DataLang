@@ -26,7 +26,7 @@ def main(conf):
                                   user=conf['dbUser'], password=conf['dbPassword'],
                                   connect_timeout=10)
     except Exception as e:
-        print("Exception while connecting to YugabyteDB")
+       print("Exception while connecting to YugabyteDB")
         print(e)
         exit(1)
 
