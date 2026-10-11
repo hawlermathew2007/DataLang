@@ -16,24 +16,18 @@ CREATE TABLE IF NOT EXISTS test_users (
 
 
 def setup_database():
-    conn = None
 
     try:
         conn = get_db_connection()
 
-        with conn:
-            with conn.cursor() as cursor:
-                cursor.execute(CREATE_USERS_TABLE)
+        with conn.cursor() as cursor:
+            cursor.execute(CREATE_USERS_TABLE)
 
         print("Database setup successful: test_users table is ready.")
 
     except (psycopg2.Error, KeyError) as exc:
         print(f"Database setup failed: {exc}")
         raise
-
-    finally:
-        if conn is not None:
-            conn.close()
 
 
 if __name__ == "__main__":

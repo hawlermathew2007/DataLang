@@ -1,6 +1,7 @@
 """Set up DB: Create a new table for data auth"""
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from collections.abc import Generator
 
 from backend.core.config import DB_INFO
 
@@ -14,3 +15,12 @@ def get_db_connection():
         password=DB_INFO["dbPassword"],
         cursor_factory=RealDictCursor,
     )
+
+
+def get_db() -> Generator:
+    conn = get_db_connection()
+
+    try:
+        yield conn
+    finally:
+        conn.close()

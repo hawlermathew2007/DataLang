@@ -1,10 +1,11 @@
 import uuid
-
 import psycopg2
-from fastapi import APIRouter, HTTPException, status
+from typing import Annotated
+from psycopg2.extensions import connection
+from fastapi import APIRouter, Depends, HTTPException, status
 from pwdlib import PasswordHash
 
-from backend.databases.conn import get_db_connection
+from backend.databases.conn import get_db
 from backend.schemas.auth import RegisterRequest
 from backend.schemas.user import User
 
@@ -21,13 +22,14 @@ password_hash = PasswordHash.recommended()
     response_model=User,
     status_code=status.HTTP_201_CREATED,
 )
-def register_user(payload: RegisterRequest):
+def register_user(
+        payload: RegisterRequest,
+        conn: Annotated[connection, Depends(get_db)]
+    ):
     user_id = uuid.uuid4()
 
     # Hash the password on the server.
     hashed_password = password_hash.hash(payload.password)
-
-    conn = get_db_connection()
 
     try:
         with conn.cursor() as cursor:
@@ -64,6 +66,3 @@ def register_user(payload: RegisterRequest):
             status_code=status.HTTP_409_CONFLICT,
             detail="Username or email already exists",
         )
-
-    finally:
-        conn.close()

@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.routers.register import register_router
 from backend.routers.login import login_router
 from backend.routers.users import user_router
+from backend.routers.data import data_router
 
 app = FastAPI()
 
@@ -30,6 +31,7 @@ def root():
 app.include_router(register_router)
 app.include_router(login_router)
 app.include_router(user_router)
+app.include_router(data_router)
 
 if __name__ == "__main__":
     import uvicorn
