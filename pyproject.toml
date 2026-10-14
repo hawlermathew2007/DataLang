@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "confluent-kafka>=2.16.0",
     "fastapi>=0.143.0",
     "psycopg2-binary>=2.9.13",
     "pwdlib[argon2]>=0.3.1",
