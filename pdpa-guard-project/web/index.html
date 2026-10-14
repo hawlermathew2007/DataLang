@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PDPA Guard</title><link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🛡️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f5f4;--card:#fff;--ink:#14212b;--mut:#5d6b75;--line:#dde3e1;--side:#0d2a31;--acc:#0b7a75;--ok:#1b7f4b;--warn:#b7791f;--hi:#c2410c;--bad:#b42318}
+*{box-sizing:border-box}body{margin:0;font:14px/1.5 "Instrument Sans","Noto Sans Myanmar",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select,textarea{font:inherit}h1{font-size:22px;margin:0 0 4px}h2{font-size:15px;margin:22px 0 8px}p.s{color:var(--mut);margin:0 0 14px}
+.shell{display:grid;grid-template-columns:232px 1fr;min-height:100vh}.side{background:var(--side);color:#cfe3e1;padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+.brand{font-weight:700;font-size:17px;color:#fff;padding:0 8px 16px}.brand small{display:block;font-weight:400;color:#8fb0ad;font-size:12px}
+.side a{display:block;padding:8px 10px;border-radius:6px;color:inherit;text-decoration:none;cursor:pointer;margin-bottom:2px}.side a:hover{background:#15414a}.side a.on{background:var(--acc);color:#fff}
+.side .foot{margin-top:auto;font-size:12px;color:#8fb0ad;padding:8px}.side .foot button{margin-top:6px;width:100%;background:transparent;color:#cfe3e1;border:1px solid #2c5560}
+main{padding:26px 32px 60px;max-width:1240px;width:100%}.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}.m b{display:block;font-size:24px;line-height:1.2}.m span{color:var(--mut);font-size:12px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.bar>*{margin:0}
+button{background:var(--acc);color:#fff;border:0;border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:500}button.g{background:#fff;color:var(--ink);border:1px solid var(--line)}button:disabled{opacity:.5}
+input,select,textarea{border:1px solid var(--line);border-radius:6px;padding:7px 9px;background:#fff;max-width:100%}textarea{width:100%;font:12.5px/1.45 ui-monospace,Menlo,monospace}
+label{display:block;font-size:12px;color:var(--mut);margin-bottom:3px}.f{display:flex;flex-direction:column}.tw{overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff;max-height:420px}
+table{border-collapse:collapse;width:100%;font-size:13px}th{position:sticky;top:0;background:#eef2f1;text-align:left;font-weight:600}th,td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-size:12px;background:#e8eeed}.high,.bad,.Critical{color:var(--bad)}.medium{color:var(--hi)}.ok{color:var(--ok)}
+.note{border-left:3px solid var(--warn);background:#fff8e8;padding:10px 12px;border-radius:4px;margin:10px 0}.err{border-left-color:var(--bad);background:#fdeeee}.info{border-left-color:var(--acc);background:#e9f5f4}
+.hero{display:flex;gap:28px;align-items:center;flex-wrap:wrap}.dial{position:relative;width:150px;height:150px}.dial svg{transform:rotate(-90deg)}.dial div{position:absolute;inset:0;display:grid;place-content:center;text-align:center}.dial b{font-size:34px;line-height:1}
+.dim{display:grid;grid-template-columns:150px 1fr 40px;gap:8px;align-items:center;margin:4px 0}.dim i{display:block;height:8px;background:var(--acc);border-radius:4px}
+details{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:8px 0}summary{cursor:pointer;font-weight:600}pre{white-space:pre-wrap;font-size:12px;margin:8px 0}
+.q{display:grid;grid-template-columns:1fr 130px;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+#toast{position:fixed;right:18px;bottom:18px;background:var(--ink);color:#fff;padding:10px 14px;border-radius:8px;opacity:0;transition:.2s;pointer-events:none;max-width:420px}#toast.on{opacity:1}#toast.bad{background:var(--bad)}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px;background:var(--side)}.login form{background:#fff;border-radius:10px;padding:28px;width:360px}.login .f{margin-bottom:12px}.login input{width:100%}.login button{width:100%;padding:10px}
+@media(max-width:800px){.shell{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap}.side .foot{display:none}main{padding:18px 14px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body><div id="app"></div><div id="toast"></div>
+<script>
+const E=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $=s=>document.querySelector(s),app=$("#app");let M={},user="",page="scan";
+async function api(p,o={}){const r=await fetch("/api"+p,{credentials:"same-origin",...o,headers:o.body&&!(o.body instanceof FormData)?{"Content-Type":"application/json"}:undefined});
+ if(r.status==401&&p!="/login"){showLogin();throw Error("Signed out")}const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.detail||"Request failed");return d}
+const post=(p,b)=>api(p,{method:"POST",body:JSON.stringify(b||{})});
+function toast(m,bad){const t=$("#toast");t.textContent=m;t.className="on"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.className="",3500)}
+const cell=v=>v&&v.h!==undefined?v.h:E(v&&typeof v=="object"?JSON.stringify(v):v);
+const tbl=(cols,rows)=>rows&&rows.length?`<div class=tw><table><thead><tr>${cols.map(c=>`<th>${E(c[0])}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${cols.map(c=>`<td>${cell(typeof c[1]=="function"?c[1](r):r[c[1]])}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`:"";
+const grid=o=>`<div class=grid>${o.map(([v,l,c])=>`<div class="card m"><b class="${c||""}">${E(v)}</b><span>${E(l)}</span></div>`).join("")}</div>`;
+const note=(t,k="")=>`<div class="note ${k}">${t}</div>`,empty=t=>`<div class="card" style="text-align:center;color:var(--mut);padding:40px">${E(t)}</div>`;
+const col=s=>s>=80?"var(--ok)":s>=60?"var(--warn)":s>=40?"var(--hi)":"var(--bad)";
+const dial=(s,l)=>`<div class=dial><svg width=150 height=150><circle cx=75 cy=75 r=60 fill=none stroke="#e3e9e7" stroke-width=12 /><circle cx=75 cy=75 r=60 fill=none stroke="${col(s)}" stroke-width=12 stroke-linecap=round stroke-dasharray=377 stroke-dashoffset="${377*(1-s/100)}"/></svg><div><b>${s}</b><span style="color:var(--mut)">${E(l)}</span></div></div>`;
+const busy=async(b,f)=>{b&&(b.disabled=true);try{await f()}catch(e){toast(e.message,1)}finally{b&&(b.disabled=false)}};
+
+function showLogin(){app.innerHTML=`<div class=login><form id=lf><h1>🛡️ PDPA Guard</h1><p class=s>Sign in to your workspace</p>
+<div class=f><label>Username</label><input name=u autocomplete=username autofocus required></div><div class=f><label>Password</label><input name=p type=password autocomplete=current-password required></div>
+<div id=le style="color:var(--bad);min-height:20px;margin-bottom:8px"></div><button>Sign in</button></form></div>`;
+ $("#lf").onsubmit=async e=>{e.preventDefault();const f=e.target;try{await post("/login",{username:f.u.value,password:f.p.value});boot()}catch(x){$("#le").textContent=x.message}}}
+const NAV=[["scan","Scan & score"],["fix","Clean & mask"],["policy","Policy (YAML)"],["mon","Live monitoring"],["breach","Breach & requests"],["docs","Documents (NLP)"],["settings","Firm profile"]];
+async function boot(){try{const me=await api("/me");user=me.user;M=await api("/meta")}catch{return showLogin()}
+ app.innerHTML=`<div class=shell><nav class=side><div class=brand>🛡️ PDPA Guard<small>v${E((await api("/me")).version)} · Singapore SMEs</small></div>${NAV.map(n=>`<a data-p=${n[0]}>${n[1]}</a>`).join("")}
+ <div class=foot>Signed in as <b>${E(user)}</b><br>Decision-support only. Not legal advice.<button id=lo>Sign out</button></div></nav><main id=main></main></div>`;
+ document.querySelectorAll(".side a").forEach(a=>a.onclick=()=>go(a.dataset.p));$("#lo").onclick=async()=>{await post("/logout");showLogin()};go(page)}
+async function go(p){page=p;document.querySelectorAll(".side a").forEach(a=>a.classList.toggle("on",a.dataset.p==p));const m=$("#main");m.innerHTML="<p class=s>Loading…</p>";
+ try{m.innerHTML=await PAGES[p](m);BIND[p]&&BIND[p](m)}catch(e){if(e.message!="Signed out")m.innerHTML=note(E(e.message),"err")}}
+const head=(t,s)=>`<h1>${t}</h1><p class=s>${s}</p>`;
+const radio=(id,v)=>`<select data-att="${id}"><option value="">Not answered<option value=yes ${v===true?"selected":""}>Yes<option value=no ${v===false?"selected":""}>No</select>`;
+
+const PAGES={},BIND={};
+PAGES.scan=async()=>{const st=await api("/state");let h=head("Scan & score","Files are analysed in memory on this server; only findings are shown.")+
+ `<div class=bar><input type=file id=up accept=".csv,.xlsx,.xls,.sql"><span style="color:var(--mut)">or</span><select id=smp>${M.samples.map(s=>`<option>${E(s)}`).join("")}</select><button class=g id=demo>Load demo data</button></div>`;
+ if(!st.tables.length)return h+empty("Upload a CSV, Excel or SQL file, or load demo data, to get your PDPA readiness score.");
+ const r=await api("/scan?table="+encodeURIComponent(st.cur));
+ h+=`<div class=bar><label style="margin:0">Table / sheet</label><select id=tsel>${st.tables.map(t=>`<option ${t==st.cur?"selected":""}>${E(t)}`).join("")}</select></div>
+ <div class="card hero">${dial(r.score,r.band)}<div style="flex:1;min-width:260px">${grid([[r.ai.score+"/100","AI readiness"],[r.rows+" × "+r.cols,"Rows × columns"],[Math.round(r.coverage*100)+"%","Rules assessed"]])}
+ <p class=s style="margin-top:10px">Coverage rises when you complete the firm profile and connect a database.</p></div></div>`;
+ if(r.di)h+=note("Data intermediary mode (s.4(2)): scored on ss.24, 25 and 26C(3)(a) only. Valid only if each client has a written contract.","info");
+ const fw=Object.entries(r.fw).filter(([k,v])=>v.score!=null);if(fw.length)h+=`<h2>Other regimes (scored separately, never blended)</h2>`+grid(fw.map(([k,v])=>[v.score+"/100",k+" · "+Math.round(v.coverage*100)+"% assessed"]));
+ h+=`<h2>What is costing you points</h2>`+(r.failing.length?tbl([["Lost","lost"],["Regime","regime"],["Rule","rule"],["Ref","ref"],["Source","src"],["Severity",x=>({h:`<span class=${x.sev}>${E(x.sev)}</span>`})],["Finding","finding"],["How to fix","fix"]],r.failing):note("No failing checks among the rules that could be assessed.","info"));
+ h+=`<details><summary>Rules not assessed (${r.na.length})</summary>${tbl([["Rule","rule"],["Ref","ref"],["Reason","why"]],r.na)}</details>`;
+ h+=`<h2>Detected personal data</h2>`+(r.found.length?tbl([["Column","column"],["Class","cls"],["Sensitivity","sens"],["Evidence","ev"],["Visible","visible"],["Notes","notes"]],r.found):"<p class=s>No personal data columns detected.</p>");
+ h+=`<h2>AI readiness</h2><div class=card>${Object.entries(r.ai.dimensions).map(([k,v])=>`<div class=dim><span>${E(k)}</span><span style="background:#e3e9e7;border-radius:4px"><i style="width:${v}%"></i></span><b>${Math.round(v)}</b></div>`).join("")}</div>`;
+ return h+`<details><summary>Preview data</summary>${tbl(Object.keys(r.preview[0]||{}).map(k=>[k,k]),r.preview)}</details>`};
+BIND.scan=m=>{$("#demo").onclick=e=>busy(e.target,async()=>{await post("/data/demo",{sample:$("#smp").value});go("scan")});
+ $("#up").onchange=e=>{const f=new FormData();f.append("file",e.target.files[0]);busy(e.target,async()=>{await api("/data/upload",{method:"POST",body:f});go("scan")})};
+ const t=$("#tsel");t&&(t.onchange=async()=>{await api("/scan?table="+encodeURIComponent(t.value));go("scan")})};
+
+PAGES.fix=async()=>{const st=await api("/state");let h=head("Clean, mask and govern","Cleans data, derives retention dates and masks identifiers. It never invents facts only your business can confirm.");
+ if(!st.tables.length)return h+empty("Load data on the Scan page first.");
+ return h+`<div class="card bar" style="align-items:end"><div class=f><label>Retention (days after collection)</label><input id=ret type=number min=30 max=3650 value=730></div>
+ <div class=f style="flex:1;min-width:240px"><label>Declared purpose (must match what individuals were told, s.20)</label><input id=pur value="tuition enrolment and communication"></div>
+ <label style="display:flex;gap:6px;align-items:center;margin:0 8px"><input type=checkbox id=msk checked> Mask identifiers</label><button id=go>Apply governance</button></div><div id=out></div>`};
+BIND.fix=m=>$("#go").onclick=e=>busy(e.target,async()=>{const r=await post("/govern",{retention:+$("#ret").value,purpose:$("#pur").value,mask:$("#msk").checked});
+ $("#out").innerHTML=grid([[r.before+"/100","Before",""],[r.after+"/100","After · "+(r.after-r.before>=0?"+":"")+(r.after-r.before).toFixed(1),"ok"],[r.ai_after+"/100","AI readiness · "+(r.ai_after-r.ai_before>=0?"+":"")+(r.ai_after-r.ai_before).toFixed(1)]])+
+ `<h2>What changed</h2><div class=card><ul style="margin:0;padding-left:18px">${r.log.map(x=>`<li>${E(x)}</li>`).join("")}</ul></div>`+
+ (r.remaining.length?note("<b>Still needs a human:</b> "+r.remaining.map(x=>`<b>${E(x.rule)}</b> – ${E(x.fix)}`).join("; ")):"")+
+ note("Masking is <b>pseudonymisation</b>: partial or tokenised data can still be personal data (s.2(1)). Run the re-identification check before calling data anonymised; unauthorised re-identification is an offence (s.48F).","info")+tbl(r.columns.map(k=>[k,k]),r.preview)+
+ `<div class=bar style="margin-top:12px"><a href="/api/govern/download?fmt=csv"><button class=g>Download CSV</button></a><a href="/api/govern/download?fmt=xlsx"><button class=g>Download Excel</button></a></div>
+ <details><summary>Re-identification check (k-anonymity)</summary><p class=s>Tick quasi-identifiers:</p><div class=bar>${r.columns.map(c=>`<label style="display:flex;gap:4px;margin:0"><input type=checkbox class=qi value="${E(c)}" ${/postal|country|joined/.test(c)?"checked":""}>${E(c)}</label>`).join("")}</div><button id=kb class=g>Check</button><pre id=ko></pre></details>`;
+ $("#kb").onclick=()=>busy(null,async()=>{$("#ko").textContent=JSON.stringify(await post("/govern/kanon",{qi:[...document.querySelectorAll(".qi:checked")].map(x=>x.value)}),null,2)})});
+
+PAGES.policy=async()=>{const p=await api("/policy");return head("Access policy as code","Declarative: roles, views, edits, row filters. Imperative: <code>then:</code> actions that run when a monitor rule fires. Applying compiles to PostgreSQL roles, masked views and grants.")+
+ `<div class=bar><label style="margin:0">Template</label><select id=tpl>${M.policies.map(t=>`<option ${t==p.tpl?"selected":""}>${E(t)}`).join("")}</select></div><textarea id=y rows=22 spellcheck=false>${E(p.yaml)}</textarea><div id=pv style="margin-top:10px"></div>`};
+BIND.policy=m=>{const v=async b=>{const r=await post("/policy",b);if(b.tpl)$("#y").value=r.yaml;
+ $("#pv").innerHTML=r.errors.length?note("<b>Policy is invalid:</b><br>"+r.errors.map(E).join("<br>"),"err"):note(`Valid policy <b>${E(r.name)}</b>: ${Object.keys(r.roles).length} roles, ${r.n_tables} table(s), ${r.n_monitor} monitor rules`,"info")+
+ `<div class=grid>${Object.entries(r.roles||{}).map(([k,d])=>`<div class=card><b>${E(k)}</b><br><span style="color:var(--mut)">${E(d)}</span></div>`).join("")}</div>`+(r.sql?`<details><summary>Compiled PostgreSQL (preview)</summary><pre>${E(r.sql)}</pre></details>`:"")};
+ let t;$("#y").oninput=e=>{clearTimeout(t);t=setTimeout(()=>v({yaml:e.target.value}),400)};$("#tpl").onchange=e=>v({tpl:e.target.value});v({})};
+
+PAGES.mon=async()=>{const st=await api("/state");let h=head("Live monitoring","Every staff query goes through the audit gateway: purpose check, DPO approval for bulk reads, masked views, logged.");
+ if(!st.db)return h+`<div class="card bar" style="align-items:end"><div class=f style="flex:1;min-width:300px"><label>PostgreSQL DSN</label><input id=dsn placeholder="postgresql://postgres:postgres@localhost:5432/pdpa_demo (blank = PDPA_GUARD_DSN)" style="width:100%"></div><button id=cn>Connect & install audit schema</button></div>`;
+ const s=await api("/db/state");
+ h+=`<div class=bar><button class=g id=ld>Load demo table + apply policy</button><button class=g id=ra>Re-apply policy (fixes drift)</button><button id=rm>Run monitor now</button></div>`+
+ grid([[s.live,"Live PDPA score","",],[s.static,"Static score"],[s.findings.length,"Open findings",s.findings.length?"bad":""],[s.drift,"Permission drift",s.drift?"bad":""]]);
+ if(s.drift_items.length)h+=note("Database permissions differ from the written policy (s.24).","err")+tbl(Object.keys(s.drift_items[0]).map(k=>[k,k]),s.drift_items);
+ h+=`<h2>Staff query console</h2><div class="card" style="display:grid;gap:10px;grid-template-columns:200px 1fr"><div class=f style="gap:8px"><div class=f><label>Act as role</label><select id=role>${s.roles.map(r=>`<option>${E(r)}`).join("")}</select></div>
+ <div class=f><label>Staff username</label><input id=stf value=amy></div><div class=f><label>Purpose</label><input id=prp></div><label style="display:flex;gap:6px"><input type=checkbox id=apv> I approve a bulk read as DPO</label></div>
+ <div class=f><label>SQL</label><textarea id=sql rows=6>select * from students limit 5</textarea><div class=bar style="margin-top:8px"><button id=rq>Run as staff</button>${["Teacher reads base table","Admin exports everyone","Intern asks for NRIC"].map((l,i)=>`<button class=g data-at=${i}>${l}</button>`).join("")}</div><div id=qo></div></div></div>`;
+ h+=`<h2>Open findings</h2>`+(s.findings.length?tbl([["ID","id"],["Time","ts"],["Severity","severity"],["Rule","rule_id"],["Obligation","obligation"],["User","app_user"],["Role","db_role"],["Detail","detail"],["",f=>({h:`<button class=g data-rs=${f.id}>Resolve</button>`})]],s.findings):"<p class=s>None.</p>");
+ h+=`<h2>Notifications to DPO</h2>`+(s.notes.length?tbl([["Time","ts"],["Message","message"]],s.notes):"<p class=s>None.</p>");
+ return h+`<details><summary>Raw activity log (latest 100)</summary>${tbl([["Time","ts"],["User","app_user"],["Role","db_role"],["Purpose","purpose"],["SQL","sql_text"],["Rows","rows"],["Denied","denied"],["Reason","reason"]],s.events)}</details>`};
+BIND.mon=m=>{const r=(b,f)=>b&&(b.onclick=e=>busy(e.target,f));
+ r($("#cn"),async()=>{await post("/db/connect",{dsn:$("#dsn").value});toast("Connected; audit schema installed.");go("mon")});
+ r($("#ld"),async()=>{await post("/db/load",{});toast("Demo table loaded and policy applied.");go("mon")});r($("#ra"),async()=>{await post("/db/load",{reapply:1});toast("Policy re-applied.");go("mon")});
+ r($("#rm"),async()=>{const x=await post("/db/monitor");toast(x.new+" new finding(s)");go("mon")});
+ r($("#rq"),async()=>{const x=await post("/db/query",{staff:$("#stf").value,role:$("#role").value,sql:$("#sql").value,purpose:$("#prp").value,approve:$("#apv").checked});
+  $("#qo").innerHTML=x.ok?`<p class=ok>${x.rowcount} row(s)</p>`+(x.columns.length?tbl(x.columns.map((c,i)=>[c,r=>r[i]]),x.rows):""):note(E(x.error),"err")});
+ m.querySelectorAll("[data-at]").forEach(b=>b.onclick=()=>busy(b,async()=>{const x=await post("/db/attack",{i:b.dataset.at});$("#qo").innerHTML=note(`<b>${E(x.label)}:</b> ${x.ok?"allowed":"DENIED – "+E(x.error)}`,x.ok?"":"err")}));
+ m.querySelectorAll("[data-rs]").forEach(b=>b.onclick=()=>busy(b,async()=>{await post("/db/resolve",{id:b.dataset.rs});go("mon")}))};
+
+PAGES.breach=async()=>{const st=await api("/state");let h=head("Breach response and individual requests","");if(!st.db)return h+empty("Connect a database on Live monitoring first.");
+ const b=await api("/breach");
+ h+=note(`s.26D(1): if assessed notifiable, notify the PDPC no later than ${b.days} calendar days after the day of assessment. Harm classes and the “significant scale” number come from regulations, not the Act – verify them.`,"info")+"<h2>Breach cases</h2>";
+ h+=b.cases.length?b.cases.map(c=>`<details><summary>Case #${c.id} · ${E(c.body.title)} · ${E(c.body.preliminary_verdict)}</summary><pre>${E(JSON.stringify(c.body,null,2))}</pre><b>Checklist</b><ul>${c.checklist.map(x=>`<li>${E(x)}</li>`).join("")}</ul>
+ ${c.client?`<label>Draft to CLIENT first (s.26C(3)(a))</label><textarea rows=8>${E(c.client)}</textarea>`:""}<label>Draft to PDPC</label><textarea rows=9>${E(c.pdpc)}</textarea><label>Draft to affected individuals</label><textarea rows=7>${E(c.individual)}</textarea></details>`).join(""):"<p class=s>No cases yet. Run a bulk read on Live monitoring, then Run monitor now.</p>";
+ h+=`<h2>Access / correction request (ss.21–22)</h2>`+(b.accounting?note("Do not disclose anything that could reveal a suspicious transaction report or AML/CFT inquiry (tipping-off, per a secondary source – verify). Ask counsel first.","err"):"")+
+ `<div class=bar><input id=idn placeholder="NRIC, email or phone" style="min-width:260px"><button id=fs>Find records</button></div><div id=sr></div>`+
+ `<h2>Retention sweep (s.25)</h2>`+(b.retention==null?"<p class=s>Load the demo table to see retention status.</p>":grid([[b.retention,"Records past their retention date",b.retention?"bad":"ok"]]));return h};
+BIND.breach=m=>{const f=$("#fs");f&&(f.onclick=e=>busy(e.target,async()=>{const r=await post("/breach/subject",{id:$("#idn").value});let h=Object.keys(r.records).length?"":note("No record found.");
+ for(const[t,rows]of Object.entries(r.records))h+=`<p><b>${E(t)}</b> – personal data held</p>`+tbl(Object.keys(rows[0]).map(k=>[k,k]),rows)+
+  `<div class=bar style="margin-top:8px"><select id=cc>${r.columns[t].map(c=>`<option>${E(c)}`).join("")}</select><input id=cv placeholder="New value"><button id=ca data-t="${E(t)}" data-pk="${rows[0].id}">Apply correction (s.22)</button></div>`;
+ if(r.uses_last_year?.length)h+="<p><b>Use / disclosure in the last year (s.21(1)(b))</b></p>"+tbl(Object.keys(r.uses_last_year[0]).map(k=>[k,k]),r.uses_last_year);
+ $("#sr").innerHTML=h;const ca=$("#ca");ca&&(ca.onclick=e=>busy(e.target,async()=>{if(!$("#cv").value)return toast("Enter a new value",1);const x=await post("/breach/correct",{table:ca.dataset.t,pk:+ca.dataset.pk,column:$("#cc").value,value:$("#cv").value});toast(x.n+" record corrected and logged. Notify organisations it was disclosed to within the past year (s.22(2)(b)).")}))}))};
+
+PAGES.docs=async()=>head("Documents: personal data and policy coverage","PDF, Word or text, processed in memory. Rule checks always run; BERT models are optional and run locally.")+
+ `<div class=bar><input type=file id=df multiple accept=".pdf,.docx,.txt,.md"><label style="display:flex;gap:6px;margin:0"><input type=checkbox id=bt ${M.nlp?"":"disabled"}> Use BERT models</label><button id=ds>Analyse</button></div>${M.nlp?"":`<p class=s>BERT is off: ${E(M.nlp_why)}. Keyword and rule checks still work.</p>`}<div id=dr></div>`;
+BIND.docs=m=>$("#ds").onclick=e=>busy(e.target,async()=>{const fl=$("#df").files;if(!fl.length)return toast("Choose at least one document",1);const f=new FormData();[...fl].forEach(x=>f.append("files",x));f.append("bert",$("#bt").checked);
+ const r=await api("/docs",{method:"POST",body:f});let h=r.error?note(E(r.error),"err"):"";window._red={};
+ r.docs.forEach((d,i)=>{if(d.error)return h+=note(E(d.name)+": "+E(d.error),"err");window._red[i]=d;
+  h+=`<details open><summary>${E(d.name)}</summary>${grid([[d.summary.total,"Items found"],[d.summary.high_sensitivity,"High sensitivity"],[d.summary.needs_review,"Needs human review"],[d.coverage+"/100","Duties mentioned"]])}<h2>Personal data inside</h2>`+
+  (d.items.length?tbl([["Type","kind"],["Sensitivity","sens"],["Preview (masked)","preview"],["Page","page"],["Para","para"],["Conf.","conf"],["Source","src"],["Note","note"]],d.items)+`<div class=bar style="margin-top:8px"><button class=g data-rd=${i}>Download redacted text</button></div>`+note("Redaction is text-only; the original file is unchanged. Context can still identify someone (s.2(1)).","info"):note("No personal data found by the enabled detectors. This is not proof there is none.","info"))+
+  `<h2>Does it cover PDPA duties?</h2>`+tbl([["Duty","duty"],["PDPA","ref"],["Status","status"],["Score","score"],["Method","method"],["Best matching sentence","evidence"]],d.duties)+
+  (d.suggest.length?`<div class=bar style="margin-top:8px"><button data-sg=${i}>Mark ${d.suggest.length} self-assessment answer(s) as Yes (you confirm they are true)</button></div>`:"")+`</details>`});
+ $("#dr").innerHTML=h;
+ document.querySelectorAll("[data-rd]").forEach(b=>b.onclick=()=>{const d=_red[b.dataset.rd],a=document.createElement("a");a.href=URL.createObjectURL(new Blob([d.redacted],{type:"text/plain"}));a.download=d.name.replace(/\.[^.]+$/,"")+"_redacted.txt";a.click()});
+ document.querySelectorAll("[data-sg]").forEach(b=>b.onclick=()=>busy(b,async()=>{const a={};_red[b.dataset.sg].suggest.forEach(k=>a[k]=true);const s=await api("/state");await api("/settings",{method:"PUT",body:JSON.stringify({csp:s.csp,pae:s.pae,di:s.di,attest:a})});toast("Marked as Yes in Firm profile")}))});
+
+PAGES.settings=async()=>{const s=await api("/state"),sc=new Set([s.csp&&"csp",s.pae&&"pae"]);
+ const ck=(id,v,t)=>`<label style="display:flex;gap:8px;color:var(--ink);font-size:14px;margin:8px 0"><input type=checkbox id=${id} ${v?"checked":""}>${t}</label>`;
+ return head("Firm profile & self-assessment","Answers feed the score. Unanswered = not assessed. “Not answered” is never counted as “No”.")+`<div class=card>`+
+ ck("csp",s.csp,"We provide corporate services / designated accounting activities (CSP Act 2024 → AML/CFT)")+ck("pae",s.pae,"We are a public accounting entity / audit firm (ACRA oversight)")+
+ ck("di",s.di,"This table is client data we process under a WRITTEN contract (data intermediary, s.4(2))")+`</div><h2>Organisational duties</h2><div class=card>${M.att.map(([id,sec,t])=>`<div class=q><span><b>${E(sec)}</b> · ${E(t)}</span>${radio(id,s.attest[id])}</div>`).join("")}</div>
+ <h2>AML/CFT, ACRA and retention-law questions (scored separately)</h2><div class=card>${M.fw.filter(([id,t,f,a])=>a=="all"||s[a]).map(([id,t,f])=>`<div class=q><span><b>${E(f)}</b> · ${E(t)}</span>${radio(id,s.attest[id])}</div>`).join("")||"<p class=s>Tick the AML/CFT or ACRA boxes above, save, and reload this page to answer these.</p>"}</div>
+ <div class=bar style="margin-top:14px"><button id=sv>Save changes</button></div>`};
+BIND.settings=m=>$("#sv").onclick=e=>busy(e.target,async()=>{const a={};m.querySelectorAll("[data-att]").forEach(x=>a[x.dataset.att]=x.value==""?null:x.value=="yes");
+ await api("/settings",{method:"PUT",body:JSON.stringify({csp:$("#csp").checked,pae:$("#pae").checked,di:$("#di").checked,attest:a})});toast("Saved");go("settings")});
+boot();
+</script></body></html>

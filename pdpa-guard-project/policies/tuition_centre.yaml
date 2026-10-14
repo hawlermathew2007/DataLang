@@ -1,0 +1,93 @@
+# PDPA Guard policy - demo tuition centre
+# DECLARATIVE: roles, tables, who can view/edit what, row filters, monitor `when:`
+# IMPERATIVE : monitor `then:` -> named Python actions (alert, notify_dpo, block, open_breach_case, recommend)
+# Editing this file changes real PostgreSQL permissions once applied. Not legal advice.
+version: 1
+name: tuition-centre-baseline
+
+settings:
+  organisation: Demo Tuition Centre Pte Ltd
+  retention_days: 730
+  timezone: Asia/Singapore
+  business_hours: "08:00-20:00"
+  default_purpose: tuition enrolment and communication
+
+roles:
+  dpo:        { description: "Designated PDPA officer (s.11(3))" }
+  admin_staff: { description: "Front-desk / enrolment" }
+  teacher:    { description: "Class teachers" }
+  marketing:  { description: "Marketing - may only see people who consented" }
+  intern:     { description: "Temporary staff" }
+
+tables:
+  public.students:
+    pk: id
+    columns:
+      id: other
+      student_name: name
+      nric: nric
+      phone: phone
+      email: email
+      postal_code: postal
+      date_joined: other
+      parent_consent: other
+      country: other
+    access:
+      dpo:
+        view: { default: full }
+        edit: [student_name, phone, email, parent_consent, postal_code, country]
+        delete: true
+      admin_staff:
+        view: { default: full, nric: partial }          # s.24: staff see S****567D, never the full NRIC
+        edit: [phone, email, parent_consent]
+        insert: true
+        purpose_required: true                          # s.18: must state why
+      teacher:
+        view: { id: full, name: full, postal: generalise, date_joined: full, default: deny }
+      marketing:
+        view: { id: full, name: full, email: full, phone: full, parent_consent: full, default: deny }
+        row_filter: "parent_consent = 'yes'"            # s.13: only consenting individuals
+        purpose_required: true
+      intern:
+        view: { id: full, name: token, default: deny }
+
+monitor:
+  - id: bulk-read
+    obligation: "s.24 protection"
+    severity: high
+    when: { type: bulk_select, rows: 50, except_roles: [dpo] }   # the DPO is the approver
+    then:
+      - { block: { unless: dpo_approval } }             # result never leaves the database without DPO approval
+      - alert
+      - notify_dpo
+      - open_breach_case
+
+  - id: denied-attempt
+    obligation: "s.24 protection"
+    severity: medium
+    when: { type: denied_access }
+    then: [alert, notify_dpo]
+
+  - id: no-purpose
+    obligation: "s.18 purpose limitation"
+    severity: low
+    when: { type: purpose_missing }
+    then: [alert]
+
+  - id: off-hours
+    obligation: "s.24 protection"
+    severity: medium
+    when: { type: off_hours }
+    then: [alert, notify_dpo]
+
+  - id: unmasked-nric
+    obligation: "s.24 protection"
+    severity: high
+    when: { type: unmasked_ids, count: 1 }
+    then: [alert, notify_dpo, open_breach_case]
+
+  - id: mass-edit
+    obligation: "s.23 accuracy / s.24 protection"
+    severity: medium
+    when: { type: bulk_change, rows: 15, window_minutes: 10 }
+    then: [alert, notify_dpo]

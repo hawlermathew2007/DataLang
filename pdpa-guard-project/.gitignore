@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+pgdata/
+.pytest_cache/
+sample_data/*_governed.csv

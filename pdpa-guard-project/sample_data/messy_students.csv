@@ -1,0 +1,129 @@
+student_name,nric,phone,email,postal_code,date_joined,parent_consent,country
+Priya Ong,S7246632Z,6595975301,priya.ong63@example.com,638399,2019-11-26,yes,Malaysia
+Daniel Rahman,T6092406B,+65 9397 0359,daniel.rahman85@example.com,411383,2020-02-23,unknown,SG
+ Hui Min Tan ,S7924402C,+65 8634 5416,hui.min.tan59@example.com,511439,2022-07-13,yes,SG
+Siti Ong,T8091418Z,6561661339,siti.ong45@example.com,638736,2021-02-15,yes,SG
+Siti Tan,S5164388G,68783213,siti.tan61@example.com,407943,2020-02-02,yes,India
+Wei Ming Tan,S7992405I,67345177,wei.ming.tan5@example.com,167303,2025-10-21,,SG
+Daniel Chua,S2503499F,92768653,daniel.chua33@example.com,250102,2024-01-15,yes,SG
+Siti Lim,S0239042F,98338866,siti.lim39@example.com,730258,2019-01-18,unknown,SG
+ Aisha Lee ,T0688310E,+65 8856 4182,aisha.lee7@example.com,395432,2021-05-24,unknown,SG
+Jun Hao Nair,s4593186b,+65 6722 2855,jun.hao.nair5@example.com,129135,2025-01-09,,SG
+ Mei Ling Singh ,T3715354G,92469285,MEI.LING.SINGH70@EXAMPLE.COM,598129,2023-11-02,,India
+Siti Ong,t8088203z,+65 6406 0060,siti.ong33@example.com,304561,2021-01-27,,Malaysia
+Mei Ling Rahman,S6699806A,6567094402,mei.ling.rahman43@example.com,436204,2025-07-28,yes,SG
+Hui Min Tan,S7924402C,+65 8634 5416,hui.min.tan59@example.com,511439,2022-07-13,yes,SG
+Daniel Ong,S9132742B,94709891,daniel.ong21@example.com,366507,2023-08-07,unknown,India
+Daniel Chua,S8675183F,93592442,daniel.chua18@example.com,642919,2019-12-28,,SG
+Daniel Ong,s9430186f,6569698301,daniel.ong82@example.com,599766,2020-11-09,yes,SG
+Aisha Lee,S1878017H,+65 9959 2643,aisha.lee66@example.com,372202,2023-04-27,,SG
+Priya Rahman,T0961923I,94290229,priya.rahman6@example.com,359060,2024-04-02,yes,SG
+Farid Tan,S2496685B,+65 6919 3900,farid.tan3@example.com,660058,2020-07-19,unknown,India
+Hui Min Rahman,T5572101C,88049503,hui.min.rahman49@example.com,151650,2024-08-07,unknown,Malaysia
+Farid Tan,T5818876F,6594926409,farid.tan87@example.com,109824,2025-07-15,yes,Malaysia
+Priya Chua,s0826199g,+65 9946 3485,priya.chua37@example.com,306927,2021-03-27,yes,SG
+Aisha Lee,S1878017H,+65 9959 2643,aisha.lee66@example.com,372202,2023-04-27,,SG
+Ravi Tan,T1048323E,+65 6866 3575,ravi.tan82@example.com,579104,2020-11-06,,Malaysia
+Jun Hao Nair,T9873200J,+65 6781 1360,jun.hao.nair8@example.com,306840,2020-07-07,,India
+Aisha Ong,S2152676B,6585563079,aisha.ong8@example.com,735251,2024-01-27,yes,India
+Wei Ming Tan,T8288909J,94857765,wei.ming.tan18@example.com,153247,2024-01-21,yes,SG
+Siti Chua,S3122562Z,6587644228,siti.chua69@example.com,542789,2025-06-18,yes,SG
+Aisha Nair,T3776020F,98562502,AISHA.NAIR54@EXAMPLE.COM,454704,2025-07-04,yes,SG
+ Priya Tan ,S4264567B,6593217408,priya.tan47@example.com,791078,2024-12-15,yes,SG
+Daniel Rahman,T6092406B,+65 9397 0359,daniel.rahman85@example.com,411383,2020-02-23,unknown,SG
+Ravi Chua,S3195271I,81364671,ravi.chua42@example.com,332417,2024-01-06,,Malaysia
+Hui Min Lee,T8656355F,6581326869,hui.min.lee57@example.com,167413,2019-04-04,yes,SG
+,S2470455F,+65 9642 7998,wei.ming.ong28@example.com,627186,2024-04-08,yes,SG
+Priya Nair,S3843025D,6564379114,priya.nair88@example.com,640416,2024-08-05,unknown,SG
+Mei Ling Lim,T6529413A,89111901,mei.ling.lim51@example.com,517094,2024-05-14,unknown,SG
+ Aisha Ong ,T7723267I,94941526,aisha.ong36@example.com,359448,2020-04-08,yes,SG
+Priya Tan,T5465925Z,+65 6842 0254,priya.tan38@example.com,714329,2024-06-24,yes,SG
+Priya Ong,S5503262I,86499979,priya.ong15@example.com,575045,2023-09-19,yes,SG
+Ravi Lim,S8288072J,+65 6389 1498,ravi.lim72@example.com,211263,2023-01-08,yes,SG
+Wei Ming Singh,S7980169J,88490552,wei.ming.singh77@example.com,532450,2023-02-03,,SG
+Farid Chua,s1826330j,+65 8940 8101,farid.chua34@example.com,580416,2024-10-27,,Malaysia
+Daniel Lee,T8278527I,+65 8487 5947,daniel.lee83@example.com,747319,2020-12-05,yes,SG
+Mei Ling Lee,S7654163I,6593624936,mei.ling.lee59example.com,291954,2024-06-25,yes,SG
+Hui Min Lee,T8245040Z,+65 9948 3466,hui.min.lee32@example.com,619046,2023-07-17,unknown,SG
+Ravi Lee,S2577954A,61764708,ravi.lee11@example.com,776444,2022-07-16,yes,Malaysia
+Aisha Lim,T5432319G,86762565,aisha.lim16@example.com,542182,2019-11-03,unknown,SG
+Farid Ong,S3302925A,86094847,farid.ong64@example.com,713228,2020-07-10,,SG
+Hui Min Rahman,S1417058H,83168032,hui.min.rahman15@example.com,759209,2021-09-25,yes,SG
+Ravi Chua,S4786122E,+65 9933 9547,ravi.chua98@example.com,458566,2023-02-11,yes,SG
+Jun Hao Rahman,T1369848H,+65 9438 6810,jun.hao.rahman12@example.com,522042,2025-09-28,yes,SG
+Wei Ming Lee,T3557063I,81681985,WEI.MING.LEE9@EXAMPLE.COM,735034,2021-06-09,unknown,India
+Ravi Ong,T9306668A,86674106,ravi.ong74@example.com,326453,2019-05-08,,SG
+ Farid Lim ,t0095235j,65472974,farid.lim45@example.com,515228,2023-01-15,yes,India
+Wei Ming Tan,S1953816H,64408466,wei.ming.tan97@example.com,204728,2020-02-26,yes,SG
+Aisha Ong,S2152676B,6585563079,aisha.ong8@example.com,735251,2024-01-27,yes,India
+Farid Rahman,S8246944C,65817869,farid.rahman84@example.com,418453,2023-08-16,unknown,SG
+Daniel Chua,S5338869H,+65 8372 2849,DANIEL.CHUA63@EXAMPLE.COM,122844,2020-09-03,unknown,SG
+ Hui Min Tan ,S5360518D,+65 8826 5214,hui.min.tan29@example.com,763970,2019-01-02,unknown,India
+ Aisha Lim ,T4516691G,85616339,aisha.lim7@example.com,378636,2022-09-11,yes,SG
+Aisha Tan,t5640544z,86382603,aisha.tan53example.com,150454,2023-10-07,yes,India
+Aisha Lee,T9797114A,92090518,aisha.lee37@example.com,472731,2020-10-04,,SG
+ Wei Ming Rahman ,t5378383z,86157279,wei.ming.rahman64@example.com,544934,2021-04-16,yes,SG
+ Priya Rahman ,S1449192I,6568582626,priya.rahman52@example.com,194797,2024-09-26,unknown,SG
+Farid Nair,T1269060B,94905896,farid.nair85@example.com,618196,2020-05-24,yes,SG
+Wei Ming Chua,T9636669D,6568571045,wei.ming.chua34@example.com,144351,2021-03-26,yes,SG
+Farid Tan,T8383620I,6592788790,farid.tan89@example.com,104103,2021-07-27,yes,India
+Farid Lee,T9347833E,6593196890,farid.lee76@example.com,231613,2025-02-22,yes,Malaysia
+ Aisha Rahman ,s0600113j,68924412,aisha.rahman58@example.com,828595,2025-03-24,yes,SG
+Ravi Chua,S6030926Z,64088766,ravi.chua94@example.com,784162,2023-12-15,yes,SG
+Priya Lee,S6516761A,63131350,priya.lee84@example.com,467428,2020-09-18,yes,SG
+Jun Hao Singh,S4815675D,98596395,jun.hao.singh87@example.com,145813,2024-09-09,yes,Malaysia
+Ravi Tan,T3817181F,63337708,ravi.tan62@example.com,665751,2023-12-01,yes,SG
+Siti Ong,T8091418Z,6561661339,siti.ong45@example.com,638736,2021-02-15,yes,SG
+Mei Ling Lee,T6402067B,81002997,mei.ling.lee58@example.com,815207,2019-12-23,,SG
+Siti Ong,T0242646Z,6599298213,siti.ong8@example.com,117649,2024-02-26,unknown,SG
+Farid Nair,T1241493A,67789108,FARID.NAIR56@EXAMPLE.COM,426020,2024-11-06,yes,India
+Siti Rahman,T0308246B,+65 6617 5466,siti.rahman48@example.com,620528,2024-09-14,unknown,SG
+Farid Rahman,S0327894H,+65 9962 9124,farid.rahman53@example.com,130444,2019-02-06,,SG
+Farid Tan,T8469501C,95803906,farid.tan32@example.com,462454,2024-02-14,,India
+Ravi Chua,S3195271I,81364671,ravi.chua42@example.com,332417,2024-01-06,,Malaysia
+ Farid Tan ,T7551313A,84428816,farid.tan62@example.com,225728,2022-12-25,yes,SG
+Mei Ling Ong,S4236671D,+65 8566 1367,mei.ling.ong91@example.com,258252,2019-03-05,yes,SG
+Ravi Singh,S4544091Z,62799547,ravi.singh33@example.com,109128,2025-12-10,yes,India
+Aisha Ong,T7400000I,92336818,aisha.ong94@example.com,431643,2021-10-24,,SG
+Mei Ling Chua,S6251557J,6594535383,mei.ling.chua55@example.com,617713,2022-06-17,unknown,Malaysia
+Siti Lim,S7151204E,6589401283,siti.lim16@example.com,254371,2024-10-15,,SG
+Jun Hao Lee,T5630481E,+65 6622 9722,jun.hao.lee29@example.com,739734,2020-04-16,,SG
+Jun Hao Singh,S6638470E,97789963,jun.hao.singh90@example.com,784180,2025-11-23,yes,SG
+Wei Ming Chua,S1178155A,82445741,wei.ming.chua27@example.com,761383,2020-08-05,yes,SG
+Siti Lim,S3597220Z,63505057,siti.lim82@example.com,112054,2019-11-27,unknown,India
+Aisha Lim,S6106891J,93510426,aisha.lim49@example.com,470098,2022-09-18,,SG
+Wei Ming Lee,s9319254j,+65 9610 7272,wei.ming.lee8@example.com,613397,2021-12-17,unknown,SG
+Daniel Rahman,T8443180F,+65 6440 2023,daniel.rahman50@example.com,826498,2024-09-16,,Malaysia
+Aisha Singh,T5345776I,+65 6708 0593,aisha.singh8@example.com,656424,2025-06-21,yes,SG
+Priya Nair,T2353412B,64278805,priya.nair39@example.com,212061,2021-04-13,,SG
+Priya Chua,T8923676I,96759277,priya.chua41@example.com,787788,2021-12-11,,SG
+Priya Lee,T2608340Z,82605395,priya.lee76@example.com,397512,2025-04-23,yes,SG
+Priya Tan,S5326502Z,95288153,priya.tan11@example.com,727864,2020-12-10,yes,SG
+Farid Nair,t0313721f,62717644,farid.nair69@example.com,743898,2022-03-21,unknown,SG
+Ravi Nair,S8414078Z,88805860,ravi.nair29@example.com,828874,2025-05-23,yes,SG
+Wei Ming Chua,S9130721I,68072794,wei.ming.chua18@example.com,542273,2019-06-01,,India
+Siti Singh,T2601815Z,94602037,siti.singh54@example.com,229815,2020-11-21,yes,India
+Mei Ling Rahman,T0495660A,84308493,mei.ling.rahman1@example.com,705862,2021-08-25,yes,SG
+,T7117777C,6562714423,aisha.lee89@example.com,253723,2024-09-01,unknown,SG
+Wei Ming Nair,T1125651H,99559085,WEI.MING.NAIR11@EXAMPLE.COM,628402,2022-11-26,yes,SG
+Aisha Lim,S6106891J,93510426,aisha.lim49@example.com,470098,2022-09-18,,SG
+Siti Chua,S7674284G,+65 8732 4994,siti.chua42@example.com,547162,2019-01-02,unknown,India
+Siti Tan,S5575918I,65149131,siti.tan62@example.com,175670,2021-10-03,yes,SG
+Jun Hao Singh,T8525388Z,+65 8474 2018,jun.hao.singh95@example.com,129294,2025-05-16,unknown,SG
+Priya Rahman,S8425606D,+65 9403 1415,priya.rahman92@example.com,619548,2025-05-06,yes,SG
+Farid Chua,s1582794g,91106359,farid.chua28example.com,140093,2023-12-21,yes,SG
+Priya Lim,S7453604B,+65 8361 5457,priya.lim26@example.com,351851,2020-06-12,yes,SG
+Aisha Singh,T4143564F,62636866,aisha.singh21@example.com,116807,2022-09-11,yes,SG
+Daniel Tan,T9747566G,+65 9226 4940,daniel.tan3@example.com,198540,2023-08-16,yes,SG
+Mei Ling Singh,T3715354G,92469285,MEI.LING.SINGH70@EXAMPLE.COM,598129,2023-11-02,,India
+Priya Chua,T1675136C,96079806,priya.chua19@example.com,198697,2022-08-06,yes,SG
+Wei Ming Tan,S0639436A,+65 6387 8065,wei.ming.tan15@example.com,130128,2019-01-05,yes,SG
+Siti Chua,T0259905D,89650759,siti.chua92@example.com,499915,2023-01-10,yes,SG
+Ravi Chua,T4848968G,98215147,ravi.chua6@example.com,650762,2020-02-14,unknown,Malaysia
+Siti Ong,T0718818D,6598950025,siti.ong31@example.com,617942,2025-07-03,,SG
+Hui Min Tan,S7515712F,6566786825,hui.min.tan13example.com,694735,2020-05-25,unknown,SG
+Daniel Ong,S9504466B,68022648,daniel.ong14@example.com,329547,2025-07-15,yes,SG
+,S2993518A,63596963,MEI.LING.RAHMAN15@EXAMPLE.COM,394527,2021-04-04,unknown,SG
+Aisha Singh,t7183417z,82282857,aisha.singh27@example.com,649522,2021-06-05,unknown,SG
+Hui Min Nair,S1378325Z,6588853429,hui.min.nair61@example.com,365865,2022-11-06,,SG
+Ravi Lee,S6978464Z,6587529894,ravi.lee23example.com,748623,2025-08-27,yes,SG

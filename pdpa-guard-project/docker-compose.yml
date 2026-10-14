@@ -1,0 +1,25 @@
+# Self-hosted: your data never leaves your own machine/network.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: pdpa_demo
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d pdpa_demo"]
+      interval: 3s
+      retries: 20
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+  app:
+    build: .
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      PDPA_GUARD_DSN: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/pdpa_demo
+      PDPA_ADMIN_USER: ${PDPA_ADMIN_USER:-admin}
+      PDPA_ADMIN_PASSWORD: ${PDPA_ADMIN_PASSWORD:-rootadmin}
+      PDPA_GUARD_TOKEN_KEY: ${PDPA_GUARD_TOKEN_KEY:-change-me-before-real-use}
+    ports: ["8000:8000"]
+volumes:
+  pgdata:

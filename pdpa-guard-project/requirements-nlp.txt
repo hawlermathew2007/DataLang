@@ -1,0 +1,6 @@
+# Optional: BERT-based document features. Heavy (~2 GB with torch). Install with:
+#   pip install -r requirements.txt -r requirements-nlp.txt
+# Tip: use the CPU build of torch on a server without a GPU.
+transformers>=4.40
+torch>=2.2
+sentence-transformers>=3.0

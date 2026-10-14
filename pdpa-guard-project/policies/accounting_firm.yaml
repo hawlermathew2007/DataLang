@@ -1,0 +1,129 @@
+# PDPA Guard policy - small accounting firm
+# The firm is usually a DATA INTERMEDIARY for its clients' employee data (s.4(2)-(3)), so s.24 and s.25 apply to it directly.
+# CLIENT SEGREGATION: staff see only clients assigned to them (row_filter on the `assignments` table).
+# Not legal advice. Retention below follows the 5-year statutory minimum - verify the exact start date with counsel.
+version: 1
+name: accounting-firm-baseline
+
+settings:
+  organisation: Demo Accounting Services LLP
+  sector: accounting
+  retention_days: 2190            # 6 years: 5-year minimum runs from the END of the financial year the transactions completed, so keep a buffer
+  legal_hold_days: 1825
+  legal_basis: "Companies Act 1967 s.199(2) (>= 5 years); IRAS record-keeping (5 years). PDPA s.25(b) permits retention while legally necessary"
+  timezone: Asia/Singapore
+  business_hours: "08:00-20:00"
+  default_purpose: client accounting, tax and compliance services
+
+roles:
+  dpo:                { description: "Partner and PDPA officer (s.11(3))" }
+  compliance_officer: { description: "Registered Qualified Individual / AML-CFT compliance" }
+  senior:             { description: "Senior accountant" }
+  junior:             { description: "Junior accountant / audit associate" }
+  intern:             { description: "Intern" }
+
+tables:
+  public.clients_cdd:
+    pk: id
+    columns:
+      id: other
+      client_id: other
+      client_name: other
+      uen: uen
+      director_nric: nric
+      contact_email: email
+      beneficial_owner: name
+      risk_rating: other
+      pep_screening: other
+      source_of_funds: other
+      last_cdd_date: other
+      date_onboarded: other
+      retention_until: other
+    access:
+      dpo:
+        view: { default: full }
+        edit: [beneficial_owner, risk_rating, pep_screening, source_of_funds, last_cdd_date]
+        delete: true
+      compliance_officer:                       # AML/CFT owner: sees whole CDD file, never payroll
+        view: { default: full }
+        edit: [beneficial_owner, risk_rating, pep_screening, source_of_funds, last_cdd_date]
+        purpose_required: true
+      senior:
+        view: { default: full, nric: partial }
+        edit: [source_of_funds, last_cdd_date]
+        purpose_required: true
+        row_filter: "client_id IN (SELECT client_id FROM public.assignments WHERE staff = current_setting('pdpa.app_user', true))"
+      junior:
+        view: { id: full, client_id: full, client_name: full, date_onboarded: full, default: deny }
+        row_filter: "client_id IN (SELECT client_id FROM public.assignments WHERE staff = current_setting('pdpa.app_user', true))"
+      intern:
+        view: { id: full, client_id: full, client_name: full, default: deny }
+        row_filter: "client_id IN (SELECT client_id FROM public.assignments WHERE staff = current_setting('pdpa.app_user', true))"
+
+  public.payroll:
+    pk: id
+    columns:
+      id: other
+      client_id: other
+      employee_name: name
+      nric: nric
+      basic_salary: salary
+      cpf_employee: cpf
+      bank_account: financial
+      date_joined: other
+      retention_until: other
+    access:
+      dpo:
+        view: { default: full }
+        delete: true
+      senior:
+        view: { default: full, nric: partial, financial: redact }
+        edit: [basic_salary, cpf_employee]
+        purpose_required: true
+        row_filter: "client_id IN (SELECT client_id FROM public.assignments WHERE staff = current_setting('pdpa.app_user', true))"
+      junior:                                   # salary shown as a band, names tokenised, no NRIC / bank
+        view: { id: full, client_id: full, employee_name: token, salary: generalise, default: deny }
+        purpose_required: true
+        row_filter: "client_id IN (SELECT client_id FROM public.assignments WHERE staff = current_setting('pdpa.app_user', true))"
+      # compliance_officer and intern: no payroll access (deny by default)
+
+monitor:
+  - id: bulk-read
+    obligation: "s.24 protection"
+    severity: high
+    when: { type: bulk_select, rows: 20, except_roles: [dpo] }
+    then:
+      - { block: { unless: dpo_approval } }
+      - alert
+      - notify_dpo
+      - open_breach_case
+
+  - id: denied-attempt
+    obligation: "s.24 protection"
+    severity: medium
+    when: { type: denied_access }
+    then: [alert, notify_dpo]
+
+  - id: no-purpose
+    obligation: "s.18 purpose limitation"
+    severity: low
+    when: { type: purpose_missing }
+    then: [alert]
+
+  - id: off-hours
+    obligation: "s.24 protection"
+    severity: medium
+    when: { type: off_hours }
+    then: [alert, notify_dpo]
+
+  - id: unmasked-nric
+    obligation: "s.24 protection"
+    severity: high
+    when: { type: unmasked_ids, count: 1 }
+    then: [alert, notify_dpo, open_breach_case]
+
+  - id: mass-edit
+    obligation: "s.23 accuracy / s.24 protection"
+    severity: medium
+    when: { type: bulk_change, rows: 15, window_minutes: 10 }
+    then: [alert, notify_dpo]
