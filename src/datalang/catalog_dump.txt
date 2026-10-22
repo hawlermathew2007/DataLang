@@ -1,0 +1,221 @@
+=== Catalog: northwind (schema: public) ===
+Server : PostgreSQL 15.12-YB-2026.1.2.0-b0 on x86_64-pc-linux-gnu, compiled by clang version 21.1.1 (https://github.com/yugabyte/llvm-project.git efca861cc42178cc4c555d605b36c79d7d121cc1), 64-bit
+Tables : 14
+
+--- public.categories ---
+URN     : urn:li:dataset:(urn:li:dataPlatform:postgres,northwind.public.categories,PROD)
+Rows    : 8
+Comment : -
+  #  column         type                   nullable  key  comment
+  -  -------------  ---------------------  --------  ---  -------
+  1  category_id    smallint               NO        PK          
+  2  category_name  character varying(15)  NO                    
+  3  description    text                   YES                   
+  4  picture        bytea                  YES                   
+
+--- public.customer_customer_demo ---
+URN     : urn:li:dataset:(urn:li:dataPlatform:postgres,northwind.public.customer_customer_demo,PROD)
+Rows    : 0
+Comment : -
+  #  column            type    nullable  key  comment
+  -  ----------------  ------  --------  ---  -------
+  1  customer_id       bpchar  NO        PK          
+  2  customer_type_id  bpchar  NO        PK          
+  FK customer_customer_demo_customer_id_fkey: (customer_id) -> customers(customer_id)
+  FK customer_customer_demo_customer_type_id_fkey: (customer_type_id) -> customer_demographics(customer_type_id)
+
+--- public.customer_demographics ---
+URN     : urn:li:dataset:(urn:li:dataPlatform:postgres,northwind.public.customer_demographics,PROD)
+Rows    : 0
+Comment : -
+  #  column            type    nullable  key  comment
+  -  ----------------  ------  --------  ---  -------
+  1  customer_type_id  bpchar  NO        PK          
+  2  customer_desc     text    YES                   
+
+--- public.customers ---
+URN     : urn:li:dataset:(urn:li:dataPlatform:postgres,northwind.public.customers,PROD)
+Rows    : 91
+Comment : -
+  #   column         type                   nullable  key  comment
+  --  -------------  ---------------------  --------  ---  -------
+  1   customer_id    bpchar                 NO        PK          
+  2   company_name   character varying(40)  NO                    
+  3   contact_name   character varying(30)  YES                   
+  4   contact_title  character varying(30)  YES                   
+  5   address        character varying(60)  YES                   
+  6   city           character varying(15)  YES                   
+  7   region         character varying(15)  YES                   
+  8   postal_code    character varying(10)  YES                   
+  9   country        character varying(15)  YES                   
+  10  phone          character varying(24)  YES                   
+  11  fax            character varying(24)  YES                   
+
+--- public.employee_territories ---
+URN     : urn:li:dataset:(urn:li:dataPlatform:postgres,northwind.public.employee_territories,PROD)
+Rows    : 49
+Comment : -
+  #  column        type                   nullable  key  comment
+  -  ------------  ---------------------  --------  ---  -------
+  1  employee_id   smallint               NO        PK          
+  2  territory_id  character varying(20)  NO        PK          
+  FK employee_territories_employee_id_fkey: (employee_id) -> employees(employee_id)
+  FK employee_territories_territory_id_fkey: (territory_id) -> territories(territory_id)
+
+--- public.employees ---
+URN     : urn:li:dataset:(urn:li:dataPlatform:postgres,northwind.public.employees,PROD)
+Rows    : 9
+Comment : -
+  #   column             type                    nullable  key  comment
+  --  -----------------  ----------------------  --------  ---  -------
+  1   employee_id        smallint                NO        PK          
+  2   last_name          character varying(20)   NO                    
+  3   first_name         character varying(10)   NO                    
+  4   title              character varying(30)   YES                   
+  5   title_of_courtesy  character varying(25)   YES                   
+  6   birth_date         date                    YES                   
+  7   hire_date          date                    YES                   
+  8   address            character varying(60)   YES                   
+  9   city               character varying(15)   YES                   
+  10  region             character varying(15)   YES                   
+  11  postal_code        character varying(10)   YES                   
+  12  country            character varying(15)   YES                   
+  13  home_phone         character varying(24)   YES                   
+  14  extension          character varying(4)    YES                   
+  15  photo              bytea                   YES                   
+  16  notes              text                    YES                   
+  17  reports_to         smallint                YES                   
+  18  photo_path         character varying(255)  YES                   
+  FK employees_reports_to_fkey: (reports_to) -> employees(employee_id)
+
+--- public.order_details ---
+URN     : urn:li:dataset:(urn:li:dataPlatform:postgres,northwind.public.order_details,PROD)
+Rows    : 2155
+Comment : -
+  #  column      type      nullable  key  comment
+  -  ----------  --------  --------  ---  -------
+  1  order_id    smallint  NO        PK          
+  2  product_id  smallint  NO        PK          
+  3  unit_price  real      NO                    
+  4  quantity    smallint  NO                    
+  5  discount    real      NO                    
+  FK order_details_order_id_fkey: (order_id) -> orders(order_id)
+  FK order_details_product_id_fkey: (product_id) -> products(product_id)
+
+--- public.orders ---
+URN     : urn:li:dataset:(urn:li:dataPlatform:postgres,northwind.public.orders,PROD)
+Rows    : 836
+Comment : -
+  #   column            type                   nullable  key  comment
+  --  ----------------  ---------------------  --------  ---  -------
+  1   order_id          smallint               NO        PK          
+  2   customer_id       bpchar                 YES                   
+  3   employee_id       smallint               YES                   
+  4   order_date        date                   YES                   
+  5   required_date     date                   YES                   
+  6   shipped_date      date                   YES                   
+  7   ship_via          smallint               YES                   
+  8   freight           real                   YES                   
+  9   ship_name         character varying(40)  YES                   
+  10  ship_address      character varying(60)  YES                   
+  11  ship_city         character varying(15)  YES                   
+  12  ship_region       character varying(15)  YES                   
+  13  ship_postal_code  character varying(10)  YES                   
+  14  ship_country      character varying(15)  YES                   
+  FK orders_customer_id_fkey: (customer_id) -> customers(customer_id)
+  FK orders_employee_id_fkey: (employee_id) -> employees(employee_id)
+  FK orders_ship_via_fkey: (ship_via) -> shippers(shipper_id)
+
+--- public.products ---
+URN     : urn:li:dataset:(urn:li:dataPlatform:postgres,northwind.public.products,PROD)
+Rows    : 77
+Comment : -
+  #   column             type                   nullable  key  comment
+  --  -----------------  ---------------------  --------  ---  -------
+  1   product_id         smallint               NO        PK          
+  2   product_name       character varying(40)  NO                    
+  3   supplier_id        smallint               YES                   
+  4   category_id        smallint               YES                   
+  5   quantity_per_unit  character varying(20)  YES                   
+  6   unit_price         real                   YES                   
+  7   units_in_stock     smallint               YES                   
+  8   units_on_order     smallint               YES                   
+  9   reorder_level      smallint               YES                   
+  10  discontinued       integer                NO                    
+  FK products_category_id_fkey: (category_id) -> categories(category_id)
+  FK products_supplier_id_fkey: (supplier_id) -> suppliers(supplier_id)
+
+--- public.region ---
+URN     : urn:li:dataset:(urn:li:dataPlatform:postgres,northwind.public.region,PROD)
+Rows    : 4
+Comment : -
+  #  column              type      nullable  key  comment
+  -  ------------------  --------  --------  ---  -------
+  1  region_id           smallint  NO        PK          
+  2  region_description  bpchar    NO                    
+
+--- public.shippers ---
+URN     : urn:li:dataset:(urn:li:dataPlatform:postgres,northwind.public.shippers,PROD)
+Rows    : 6
+Comment : -
+  #  column        type                   nullable  key  comment
+  -  ------------  ---------------------  --------  ---  -------
+  1  shipper_id    smallint               NO        PK          
+  2  company_name  character varying(40)  NO                    
+  3  phone         character varying(24)  YES                   
+
+--- public.suppliers ---
+URN     : urn:li:dataset:(urn:li:dataPlatform:postgres,northwind.public.suppliers,PROD)
+Rows    : 29
+Comment : -
+  #   column         type                   nullable  key  comment
+  --  -------------  ---------------------  --------  ---  -------
+  1   supplier_id    smallint               NO        PK          
+  2   company_name   character varying(40)  NO                    
+  3   contact_name   character varying(30)  YES                   
+  4   contact_title  character varying(30)  YES                   
+  5   address        character varying(60)  YES                   
+  6   city           character varying(15)  YES                   
+  7   region         character varying(15)  YES                   
+  8   postal_code    character varying(10)  YES                   
+  9   country        character varying(15)  YES                   
+  10  phone          character varying(24)  YES                   
+  11  fax            character varying(24)  YES                   
+  12  homepage       text                   YES                   
+
+--- public.territories ---
+URN     : urn:li:dataset:(urn:li:dataPlatform:postgres,northwind.public.territories,PROD)
+Rows    : 53
+Comment : -
+  #  column                 type                   nullable  key  comment
+  -  ---------------------  ---------------------  --------  ---  -------
+  1  territory_id           character varying(20)  NO        PK          
+  2  territory_description  bpchar                 NO                    
+  3  region_id              smallint               NO                    
+  FK territories_region_id_fkey: (region_id) -> region(region_id)
+
+--- public.us_states ---
+URN     : urn:li:dataset:(urn:li:dataPlatform:postgres,northwind.public.us_states,PROD)
+Rows    : 51
+Comment : -
+  #  column        type                    nullable  key  comment
+  -  ------------  ----------------------  --------  ---  -------
+  1  state_id      smallint                NO        PK          
+  2  state_name    character varying(100)  YES                   
+  3  state_abbr    character varying(2)    YES                   
+  4  state_region  character varying(50)   YES                   
+
+=== Table-level edges derived from foreign keys (parent -> child) ===
+  categories -> products
+  customer_demographics -> customer_customer_demo
+  customers -> customer_customer_demo
+  customers -> orders
+  employees -> employee_territories
+  employees -> orders
+  orders -> order_details
+  products -> order_details
+  region -> territories
+  shippers -> orders
+  suppliers -> products
+  territories -> employee_territories
+  (self-references skipped: employees)

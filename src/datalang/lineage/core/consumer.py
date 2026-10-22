@@ -8,13 +8,13 @@ logger = logging.getLogger(__name__)
 
 consumer = Consumer({
     "bootstrap.servers": "localhost:9092",
-    "group.id": "python-cdc-backend",
+    "group.id": "lineage-backend",
     "auto.offset.reset": "earliest",
     "enable.auto.commit": False,
 })
 
 TOPICS = [
-    "yb_test.public.orders",
+    "db_test.public.orders",
 ]
 
 
