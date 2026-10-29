@@ -1,0 +1,24 @@
+{
+  "name": "${CONNECTOR_NAME}",
+  "config": {
+    "connector.class": "${CONNECTOR_CLASS}",
+    "tasks.max": "${CONNECTOR_TASKS_MAX}",
+
+    "database.hostname": "${DB_HOST}",
+    "database.port": "${DB_PORT}",
+    "database.user": "${DB_USER}",
+    "database.password": "${DB_PASSWORD}",
+    "database.dbname": "${DB_DATABASE}",
+
+    "topic.prefix": "${CDC_TOPIC_PREFIX}",
+    "plugin.name": "${CDC_PLUGIN_NAME}",
+    "slot.name": "${CDC_SLOT_NAME}",
+    "publication.name": "${CDC_PUBLICATION_NAME}",
+    "publication.autocreate.mode": "${CDC_PUBLICATION_AUTOCREATE_MODE}",
+
+    "schema.include.list": "${CDC_SCHEMA_INCLUDE_LIST}",
+    "table.include.list": "${CDC_TABLE_INCLUDE_LIST}",
+    "snapshot.mode": "${CDC_SNAPSHOT_MODE}"
+  }
+}
+
