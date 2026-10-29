@@ -42,3 +42,19 @@ A PostgreSQL publication defines which tables and operations are exposed through
 **Why create a publication?**
 
 Debezium's PostgreSQL connector uses the pgoutput plugin to consume changes from a publication. The publication acts as the table-selection boundary; it is separate from the replication slot, which maintains the stream's position.
+
+### Transaction block
+A database transaction block is a sequence of SQL operations grouped together using explicit boundary commands (such as BEGIN and COMMIT or ROLLBACK) so that they execute as a single, indivisible unit of work.
+
+Key Characteristics
+
+- ACID Compliance: Ensures Atomicity, Consistency, Isolation, and Durability. Either all operations inside the block succeed and are permanently saved (COMMIT), or any failure causes the entire set of changes to be undone (ROLLBACK).
+- Implicit vs. Explicit Blocks: Many relational databases (like PostgreSQL or MySQL) wrap individual SQL statements in an implicit transaction if you do not explicitly open one. An explicit block starts with a command like BEGIN or BEGIN WORK and ends with COMMIT or ROLLBACK.
+
+Transaction Blocking (Concurrency Conflicts)
+
+"Blocking" occurs when one transaction holds a lock on a database resource (such as a row, page, or table) and a second transaction requests a conflicting lock.
+
+- Shared Locks vs. Exclusive Locks: Read operations typically acquire shared locks, while write operations (INSERT, UPDATE, DELETE) acquire exclusive locks. An exclusive lock prevents other transactions from reading or modifying that data until the first transaction commits or rolls back.
+- Performance Impact: Long-running transaction blocks extend the lifespan of locks, causing subsequent queries to queue or time out (and potentially leading to deadlocks if two transactions wait on each other).
+--Best Practice: Keep transaction blocks as short as possible, confine them strictly to database operations, and avoid user interaction or external API calls inside an open transaction.

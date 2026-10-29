@@ -143,7 +143,7 @@ WHERE rolname = 'debezium_user';
 Grant access to the database that contains sample tables:
 
 ```
-GRANT CONNECT, CREATE ON DATABASE northwind TO debezium_user;
+GRANT CONNECT ON DATABASE northwind TO debezium_user;
 ```
 
 Connect to "northwind" and grant access to the schema and table that is used to capture:
