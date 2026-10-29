@@ -1,7 +1,6 @@
 ## Start Kafka Connect (with Kraft mode) and the Debezium connector plugin within
 
-Do these when DataHub finished setup.
-
+Run Docker Compose
 ```
 docker compose up -d
 docker compose logs -f connect
