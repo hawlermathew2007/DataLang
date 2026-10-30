@@ -1,0 +1,80 @@
+services:
+  kafka-broker:
+    image: confluentinc/cp-kafka:8.2.2
+    container_name: kafka-broker
+    hostname: broker
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    environment:
+      KAFKA_NODE_ID: '1'
+      KAFKA_BROKER_ID: '1'
+      KAFKA_LISTENERS: BROKER://broker:29092,EXTERNAL://broker:9092,CONTROLLER://broker:39092
+      KAFKA_ADVERTISED_LISTENERS: BROKER://broker:29092,EXTERNAL://localhost:9092
+      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: 'false'
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@broker:39092
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: '0'
+      KAFKA_HEAP_OPTS: -Xms512m -Xmx512m
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_LOG4J_LOGGERS: org.apache.kafka.image.loader.MetadataLoader=WARN
+      KAFKA_MAX_MESSAGE_BYTES: '5242880'
+      KAFKA_MESSAGE_MAX_BYTES: '5242880'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '1'
+      KAFKA_PROCESS_ROLES: controller, broker
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - kafka-broker-api-versions --bootstrap-server broker:29092 >/dev/null 2>&1
+      timeout: 10s
+      interval: 5s
+      retries: 12
+      start_period: 1m0s
+    command:
+    - /bin/bash
+    - -c
+    - |
+      # Generate KRaft clusterID
+      file_path="/var/lib/kafka/data/clusterID"
+
+      if [ ! -f "$$file_path" ]; then
+         /bin/kafka-storage random-uuid > $$file_path
+         echo "Cluster id has been created..."
+         # KRaft required step: Format the storage directory with a new cluster ID
+         kafka-storage format --ignore-formatted -t $$(cat "$$file_path") -c /etc/kafka/kafka.properties
+      fi
+
+      export CLUSTER_ID=$$(cat "$$file_path")
+      echo "CLUSTER_ID=$$CLUSTER_ID"
+
+      /etc/confluent/docker/run
+    restart: unless-stopped
+
+  kafka-connect:
+    image: ${CDC_CONNECTOR}
+    container_name: kafka-connect
+    # network_mode: host  # suppose can make kafka connect connect to datahub hosts, but not working in Mac for whatever reason
+    ports:
+    - "8083:8083"
+    depends_on:
+      kafka-broker:
+        condition: service_healthy
+        required: true
+    environment:
+      BOOTSTRAP_SERVERS: broker:29092
+      GROUP_ID: "main"
+      CONFIG_STORAGE_TOPIC: db_connect_configs
+      OFFSET_STORAGE_TOPIC: db_connect_offsets
+      STATUS_STORAGE_TOPIC: db_connect_statuses
+      CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CLASSPATH: /kafka/connect/
+    extra_hosts:
+    - "host.docker.internal:host-gateway"  # future no need
+    restart: unless-stopped
+
+volumes:
+  kafka_data:
