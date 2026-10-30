@@ -158,21 +158,8 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public
 SELECT
     has_database_privilege(
         'debezium_user', 'northwind', 'CONNECT'
-    ) AS can_connect,
-    has_database_privilege(
-        'debezium_user', 'northwind', 'CREATE'
-    ) AS can_create;
-```
+    ) AS can_connect;
 
-Grant access to tables in the database:
-
-```
-GRANT USAGE ON SCHEMA public TO debezium_user;
-
-GRANT SELECT ON ALL TABLES IN SCHEMA public
-TO debezium_user;
-
-# Check
 SELECT
     has_table_privilege(
         'debezium_user',

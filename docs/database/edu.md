@@ -58,3 +58,27 @@ Transaction Blocking (Concurrency Conflicts)
 - Shared Locks vs. Exclusive Locks: Read operations typically acquire shared locks, while write operations (INSERT, UPDATE, DELETE) acquire exclusive locks. An exclusive lock prevents other transactions from reading or modifying that data until the first transaction commits or rolls back.
 - Performance Impact: Long-running transaction blocks extend the lifespan of locks, causing subsequent queries to queue or time out (and potentially leading to deadlocks if two transactions wait on each other).
 --Best Practice: Keep transaction blocks as short as possible, confine them strictly to database operations, and avoid user interaction or external API calls inside an open transaction.
+
+### DDL and DML
+
+In database management systems, DDL (Data Definition Language) handles the blueprint and architecture of the database, while DML (Data Manipulation Language) handles the actual information stored inside that structure.
+
+Think of DDL as building the house (rooms, walls, closets) and DML as managing the furniture inside it (adding, changing, or throwing things away).
+
+**Key Differences**
+
+| Feature                    | DDL (Data Definition Language)                                                                  | DML (Data Manipulation Language)                             |
+
+| :------------------------- | :---------------------------------------------------------------------------------------------- | :----------------------------------------------------------- |
+
+| **Primary Purpose**        | Defines, alters, and manages the database structure or schema.                                  | Manages and manipulates the data records within the tables.  |
+
+| **Core Commands**          | `CREATE`, `ALTER`, `DROP`, `TRUNCATE`, `RENAME`                                                 | `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`              |
+
+| **Target Scope**           | Entire database objects (tables, views, indexes, schemas).                                      | Individual rows or records inside a table.                   |
+
+| **Transactional Rollback** | Cannot be rolled back in most systems because it auto-commits (PostgreSQL is a notable exception). | Can be rolled back using transaction controls like `ROLLBACK`.|
+
+| **Filtering (`WHERE`)**    | No (acts globally on the structure).                                                           | Yes (used to isolate specific rows).                         |
+
+| **Typical Users**          | Database Administrators (DBAs) and system architects.                                           | Software developers, data analysts, and end-user applications.|
