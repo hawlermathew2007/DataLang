@@ -1,19 +1,17 @@
 services:
   kafka-broker:
     image: confluentinc/cp-kafka:8.2.2
+    container_name: kafka-broker
+    hostname: broker
     ports:
-    - mode: ingress
-      target: 9092
-      published: '9092'
-      protocol: tcp
+      - "9092:9092"
     volumes:
-    - type: volume
-      source: broker
-      target: /var/lib/kafka/data
-      volume: {}
+      - kafka_data:/var/lib/kafka/data
     environment:
-      KAFKA_ADVERTISED_LISTENERS: BROKER://broker:29092,EXTERNAL://localhost:9092
+      KAFKA_NODE_ID: '1'
       KAFKA_BROKER_ID: '1'
+      KAFKA_LISTENERS: BROKER://broker:29092,EXTERNAL://broker:9092,CONTROLLER://broker:39092
+      KAFKA_ADVERTISED_LISTENERS: BROKER://broker:29092,EXTERNAL://localhost:9092
       KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: 'false'
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@broker:39092
@@ -21,15 +19,11 @@ services:
       KAFKA_HEAP_OPTS: -Xms512m -Xmx512m
       KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_LISTENERS: BROKER://broker:29092,EXTERNAL://broker:9092,CONTROLLER://broker:39092
       KAFKA_LOG4J_LOGGERS: org.apache.kafka.image.loader.MetadataLoader=WARN
       KAFKA_MAX_MESSAGE_BYTES: '5242880'
       KAFKA_MESSAGE_MAX_BYTES: '5242880'
-      KAFKA_NODE_ID: '1'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '1'
       KAFKA_PROCESS_ROLES: controller, broker
-      KAFKA_ZOOKEEPER_CONNECT: null
-    hostname: broker
     healthcheck:
       test:
       - CMD-SHELL
@@ -56,12 +50,11 @@ services:
       echo "CLUSTER_ID=$$CLUSTER_ID"
 
       /etc/confluent/docker/run
-    volumes:
-      - kafka_data:/var/lib/kafka/data
     restart: unless-stopped
 
   kafka-connect:
     image: ${CDC_CONNECTOR}
+    container_name: kafka-connect
     # network_mode: host  # suppose can make kafka connect connect to datahub hosts, but not working in Mac for whatever reason
     ports:
     - "8083:8083"
@@ -80,13 +73,8 @@ services:
       STATUS_STORAGE_REPLICATION_FACTOR: 1
       CLASSPATH: /kafka/connect/
     extra_hosts:
-    - "host.docker.internal:host-gateway"
+    - "host.docker.internal:host-gateway"  # future no need
     restart: unless-stopped
-
-# networks:
-#   datahub_net:
-#     name: datahub_network
-#     external: true
 
 volumes:
   kafka_data:
