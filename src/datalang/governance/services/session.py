@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from secrets import token_urlsafe
 from threading import RLock
-from fastapi import HTTPException, Request, Response
+from fastapi import Request, Response
 
 from governance.core.config import settings
 from governance.schemas.cache import Cache
@@ -31,28 +31,6 @@ def create_app_session(response: Response, cache: Cache):
         max_age=int(settings.session_ttl.total_seconds()),
         path="/",
     )
-
-
-def get_cache_id(request: Request, owner_id: str = "ABCUUID"):
-    session_id = request.cookies.get(settings.session_cookie)
-
-    if not session_id:
-        raise HTTPException(401, "Please connect to a database first.")
-
-    now = datetime.now(timezone.utc)
-
-    with _lock:
-        record = _sessions.get(session_id)
-
-        if not record or now >= record["expires_at"]:
-            _sessions.pop(session_id, None)
-            raise HTTPException(401, "Session expired. Please reconnect.")
-
-        if record["owner"] != owner_id:
-            raise HTTPException(401, "Wrong owner.")
-
-        record["expires_at"] = now + settings.session_ttl
-        return record["cache"]
 
 
 def clear_app_session(request: Request, response: Response):

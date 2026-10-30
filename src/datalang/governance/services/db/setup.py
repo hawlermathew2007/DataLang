@@ -18,3 +18,8 @@ def setup_db():
     )
     engine = get_engine(credentials)
     Base.metadata.create_all(engine)
+
+
+if __name__ == "__main__":
+    setup_db()
+    print("Successfully created all tables to datalang.")

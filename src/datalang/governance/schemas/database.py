@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+# we might need a list string here
+
 
 class DatabaseCredentials(BaseModel):
     database: str = "template0"

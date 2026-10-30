@@ -2,6 +2,12 @@ from sqlalchemy import bindparam, text
 from governance.schemas.database import WALSettings
 from pint import UnitRegistry
 
+from governance.schemas.database import DatabaseCredentials
+from governance.services.db.conn import (
+    get_db_session,
+    get_db_core_session
+)
+
 ALLOWED_WAL_SETTINGS = (
     "wal_level",
     "max_wal_size",
@@ -33,35 +39,39 @@ def wal_values_match(name: str, requested: str, current: dict) -> bool:
 
         return current_value.to_base_units() == requested_value.to_base_units()
     except (ValueError, TypeError, ureg.UndefinedUnitError):
-        return str(setting) == str(requested)  # questionable...
+        return str(setting) == str(requested)
 
 
-def read_wal(db_session) -> list[dict]:
-    query = text("""
-        SELECT name, setting, unit, context, pending_restart
-        FROM pg_settings
-        WHERE name IN :names
-        ORDER BY name
-    """).bindparams(
-        # Expands the tuple into individual SQL parameters.
-        bindparam("names", expanding=True)
-    )
+def read_wal(credentials: DatabaseCredentials) -> list[dict]:
+    with get_db_session(credentials) as session:
+        # I add it when learnt bindparam(s)
+        # so remove query var and bindparam if want hehe :b
+        query = text("""
+            SELECT name, setting, unit, context, pending_restart
+            FROM pg_settings
+            WHERE name IN :names
+            ORDER BY name
+        """).bindparams(
+            # Expands the tuple into individual SQL parameters.
+            bindparam("names", expanding=True)
+        )
 
-    rows = db_session.execute(
-        query, {"names": ALLOWED_WAL_SETTINGS}
-    ).mappings().all()
+        rows = session.execute(
+            query, {"names": ALLOWED_WAL_SETTINGS}
+        ).mappings().all()
 
     return [dict(row) for row in rows]
 
 
-def config_wal(engine, config: WALSettings):
+def config_wal(credentials: DatabaseCredentials, config: WALSettings):
     changes = []
 
     settings = config.model_dump(exclude_none=True)
 
-    with engine.connect().execution_options(
-        isolation_level="AUTOCOMMIT"
-    ) as conn:
+    # PostgreSQL rejects this statement if it runs inside a transaction block
+    # which is not in autocommit mode (implicit transaction block)
+    # need to work t sqlalchemy core layer instead
+    with get_db_core_session(credentials) as conn:
         before = read_wal(conn)
         before_dict = {item["name"]: item for item in before}
 
