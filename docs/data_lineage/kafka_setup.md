@@ -72,7 +72,7 @@ WHERE order_id = (SELECT min(order_id) FROM orders);
 Consume events from the table topic:
 
 ```
-ocker exec datahub-kafka-broker-1 \
+docker exec datahub-kafka-broker-1 \
   kafka-console-consumer \
   --bootstrap-server broker:29092 \
   --topic db_test.public.orders \
